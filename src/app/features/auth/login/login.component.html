@@ -1,0 +1,76 @@
+<div class="h-full flex justify-center items-center bg-gray-50">
+  <div class="w-full md:w-3/5 flex justify-center">
+    <mat-card class="w-full max-w-sm p-6 gap-4 !bg-gray-50 !shadow-none">
+      <mat-card-title class="text-center text-2xl font-bold mb-4"
+        >Inicia sesión en Local Walls
+      </mat-card-title>
+      <mat-card-content>
+        <form
+          (ngSubmit)="onSubmit()"
+          [formGroup]="loginForm"
+          class="flex flex-col"
+        >
+          <mat-form-field appearance="outline">
+            <mat-label>Correo electrónico</mat-label>
+            <input
+              matInput
+              id="identifier"
+              type="text"
+              formControlName="identifier"
+              placeholder="Introduce tu email"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Contraseña</mat-label>
+            <input
+              matInput
+              id="password"
+              [type]="hidePassword ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="Introduce tu contraseña"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="hidePassword = !hidePassword"
+              [attr.aria-label]="'Hide password'"
+              [attr.aria-pressed]="hidePassword"
+            >
+              <mat-icon
+                >{{ hidePassword ? "visibility_off" : "visibility" }}
+              </mat-icon>
+            </button>
+          </mat-form-field>
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="loginForm.invalid"
+            class="w-full"
+          >
+            Iniciar sesión
+          </button>
+        </form>
+        @if (error) {
+          <mat-card-content>
+            <p class="text-center text-red-500 mt-4">{{ error }}</p>
+          </mat-card-content>
+        }
+        <p class="text-center mt-4">
+          ¿No tienes cuenta?
+          <a class="text-blue-500 hover:underline" routerLink="/auth/register"
+            >Regístrate</a
+          >
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="hidden md:block w-2/5 h-full">
+    <img
+      src="img/flor.jpg"
+      alt="Background image"
+      class="w-full h-full object-cover filter grayscale opacity-70"
+    />
+  </div>
+</div>
