@@ -1,6 +1,17 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError, map } from 'rxjs';
+import {
+  Ascent,
+  Bolter,
+  Crag,
+  Parking,
+  Route,
+  StrapiResponse,
+  Topo,
+  User,
+  Zone,
+} from '../models/strapi-models';
 
 const STRAPI_HOST = 'http://localhost:1337';
 const TOKEN_KEY = 'token';
@@ -41,7 +52,11 @@ export class StrapiService {
     );
   }
 
-  private post<T>(endpoint: string, body: any, dataBody = true): Observable<T> {
+  private post<T>(
+    endpoint: string,
+    body: unknown,
+    dataBody = true,
+  ): Observable<T> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       ...(dataBody && this.token()
@@ -64,7 +79,11 @@ export class StrapiService {
       );
   }
 
-  private put<T>(endpoint: string, body: any, dataBody = true): Observable<T> {
+  private put<T>(
+    endpoint: string,
+    body: unknown,
+    dataBody = true,
+  ): Observable<T> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       ...(this.token() ? { Authorization: `Bearer ${this.token()}` } : {}),
@@ -106,7 +125,7 @@ export class StrapiService {
   login(
     identifier: string,
     password: string,
-  ): Observable<{ jwt: string; user: any }> {
+  ): Observable<{ jwt: string; user: User }> {
     return this.post('auth/local', { identifier, password }, false);
   }
 
@@ -114,7 +133,7 @@ export class StrapiService {
     username: string,
     email: string,
     password: string,
-  ): Observable<{ jwt: string; user: any }> {
+  ): Observable<{ jwt: string; user: User }> {
     return this.post(
       'auth/local/register',
       { username, email, password },
@@ -123,51 +142,51 @@ export class StrapiService {
   }
 
   // Zones
-  getZones(): Observable<any> {
+  getZones(): Observable<StrapiResponse<Zone[]>> {
     return this.get('zones?populate[crags]=true');
   }
 
-  getZoneById(zoneId: number): Observable<any> {
+  getZoneById(zoneId: number): Observable<Zone> {
     return this.get(`zones/${zoneId}?populate[crags]=true`);
   }
 
   // Crags
-  getCrags(): Observable<any> {
+  getCrags(): Observable<Crag[]> {
     return this.get('crags?populate[topos]=true&populate[parkings]=true');
   }
 
-  getCragById(cragId: number): Observable<any> {
+  getCragById(cragId: number): Observable<Crag> {
     return this.get(
       `crags/${cragId}?populate[topos]=true&populate[parkings]=true`,
     );
   }
 
   // Topos
-  getTopos(): Observable<any> {
+  getTopos(): Observable<Topo[]> {
     return this.get('topos?populate[routeTopos][populate]=route');
   }
 
-  getTopoById(topoId: number): Observable<any> {
+  getTopoById(topoId: number): Observable<Topo> {
     return this.get(`topos/${topoId}?populate[routeTopos][populate]=route`);
   }
 
   // Routes
-  getRoutes(): Observable<any> {
+  getRoutes(): Observable<Route[]> {
     return this.get('routes?populate[bolters]=true&populate[ascents]=true');
   }
 
-  getRouteById(routeId: number): Observable<any> {
+  getRouteById(routeId: number): Observable<Route> {
     return this.get(
       `routes/${routeId}?populate[bolters]=true&populate[ascents]=true`,
     );
   }
 
   // Bolters
-  getBolters(): Observable<any> {
+  getBolters(): Observable<Bolter[]> {
     return this.get('bolters');
   }
 
-  getBolterById(bolterId: number): Observable<any> {
+  getBolterById(bolterId: number): Observable<Bolter> {
     return this.get(`bolters/${bolterId}`);
   }
 
@@ -177,20 +196,20 @@ export class StrapiService {
     grade: string;
     type: string;
     date: string;
-  }): Observable<any> {
+  }): Observable<Ascent> {
     return this.post('ascents', ascentData);
   }
 
-  getUserAscents(userId: number): Observable<any> {
+  getUserAscents(userId: number): Observable<Ascent> {
     return this.get(`users/${userId}?populate[ascents]=true`);
   }
 
   // Parkings
-  getParkings(): Observable<any> {
+  getParkings(): Observable<Parking[]> {
     return this.get('parkings');
   }
 
-  getParkingById(parkingId: number): Observable<any> {
+  getParkingById(parkingId: number): Observable<Parking> {
     return this.get(`parkings/${parkingId}`);
   }
 }

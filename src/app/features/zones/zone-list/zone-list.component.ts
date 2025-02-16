@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   OnInit,
 } from '@angular/core';
@@ -22,14 +21,15 @@ export class ZoneListComponent implements OnInit {
   private router = inject(Router);
 
   ngOnInit() {
-    this.loadZones();
+    if (!this.globalStore.zones().length) {
+      this.loadZones();
+    }
   }
 
-  // Load zones from the Strapi API
   private loadZones() {
     this.strapiService.getZones().subscribe({
       next: (zones) => {
-        this.globalStore.zones.set(zones as Zone[]);
+        this.globalStore.zones.set(zones.data);
       },
       error: (err) => {
         console.error(err);
@@ -37,12 +37,10 @@ export class ZoneListComponent implements OnInit {
     });
   }
 
-  // Search handler
   onSearch(searchTerm: string) {
     this.globalStore.searchTerm.set(searchTerm);
   }
 
-  // Zone selection
   onZoneSelect(zone: Zone) {
     this.router.navigate(['/zone-info', zone.id]);
   }
